@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RD1O Player</title>
+
+
+    <!-- Materialize -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="app.css">
+  </head>
+  <body>
+    <nav class="red accent-1">
+      <div class="nav-wrapper">
+        <a href="#" class="brand-logo"><i class="material-icons">music_note</i> RD1O</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="https://discord.gg/0nlCIL7OsctU7T4w" target="_blank">Join us on Discord</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="row main">
+      <div class="col s12 m12 l6 player-row">
+        <div class="card">
+          <div class="card-image">
+            <div class="video-container">
+              <div id="player"></div>
+            </div>
+          </div>
+          <div class="progress">
+              <div class="determinate" style="width: 0%" id="progress"></div>
+          </div>
+          <div class="card-content">
+            <span class="card-title grey-text text-darken-4 truncate" id="videoTitle"></span>
+            <center>
+              <button class="btn-floating waves-effect waves-light red" id="disabled" disabled><i class="material-icons"></i></button>
+              <button class="btn-floating btn-large waves-effect waves-light red" id="play-pause"><i id="pp-icon" class="material-icons">pause</i></button>
+              <button class="btn-floating waves-effect waves-light red" id="skip"><i class="material-icons">skip_next</i></button>
+            </center>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m12 l6">
+        <h3>Channels</h3>
+        <ul class="collapsible" data-collapsible="accordion">
+        <li>
+          <div class="collapsible-header active"><i class="material-icons">close</i>RD1O</div>
+          <div class="collapsible-body"><p>RD1O channels coming soon!<br>For now use one of the other channels.</p></div>
+        </li>
+        <li>
+          <div class="collapsible-header"><i class="material-icons">queue_music</i>Discord.FM<span class="badge"><a href="https://discord.fm" target="_blank">Site</a></span></div>
+          <div class="collapsible-body">
+            <div class="collection">
+              <a href="#!" class="collection-item cnl-btn" id="dfm_all">All</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_electro-hub">Electro Hub</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_chill-corner">Chill Corner</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_korean-madness">Korean Madness</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_japanese-lounge">Japanese Lounge</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_retro-renegade">Retro Renegade</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_metal-mix">Metal Mix</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_hip-hop">Hip-hop</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_rock-n-roll">Rock-n-Roll</a>
+              <a href="#!" class="collection-item cnl-btn" id="dfm_coffee-house-jazz">Coffee-house Jazz</a>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header"><i class="material-icons">close</i>Twitch<span class="badge"><a href="https://twitch.tv" target="_blank">Site</a></span></div>
+          <div class="collapsible-body"><p>Twitch channels coming soon!<br>For now use one of the other channels.</p></div>
+        </li>
+      </ul>
+      </div>
+    </div>
+
+    <footer class="page-footer red accent-1">
+      <div class="container">
+        <div class="row">
+          <div class="col l6 s12">
+            <h5 class="white-text">About</h5>
+            <p class="grey-text text-lighten-4">RD1O was originially a web UI for Discord.FM, very soon after it was converted to a multi-platform music service.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+          Copyright &copy; 2016 Zachary Vacura All Rights Reserved.
+        </div>
+      </div>
+    </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+    <script src="youtube.js"></script>
+</body>
+</html>
