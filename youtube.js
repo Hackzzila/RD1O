@@ -73,6 +73,8 @@ function loadVideo() {
   try {
     if (!live) song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
     if (live) song = lastSong;
+
+    if (song.service != "YoutubeVideo") song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
   } catch (err) {
     song = {
       identifier: "dQw4w9WgXcQ",
@@ -157,9 +159,15 @@ function initWebsocket() {
   $.get("https://temp.discord.fm/libraries/" + localStorage.channel + "/queue", (data) => {
     let startTime = new Date(data.playStart);
     let position = Math.floor(Math.abs(Date.now() - startTime) / 1000);
+    let song = data.current;
 
-    $("#videoTitle").text(data.current.title)
-    player.loadVideoById(data.current.identifier, 0, "large")
+    if (song.service != "YoutubeVideo") {
+      song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)];
+      position = 0;
+    }
+
+    $("#videoTitle").text(song.title)
+    player.loadVideoById(song.identifier, 0, "large")
     player.seekTo(position);
   });
 }
