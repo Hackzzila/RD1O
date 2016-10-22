@@ -18,8 +18,8 @@ socket.onmessage = (event) => {
 }
 
 function initPlayer() {
-  if (!localStorage["channel"]) {
-    localStorage["channel"] = "all";
+  if (!localStorage.channel) {
+    localStorage.channel = "all";
   }
   $("#" + localStorage.channel).addClass("active")
 
@@ -28,6 +28,15 @@ function initPlayer() {
   tag.src = "https://www.youtube.com/iframe_api";
   let firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  $(".cnl-btn").click((e) => {
+    console.log("click");
+    $(".cnl-btn").removeClass("active")
+    $(e.target).addClass("active")
+    localStorage.channel = $(e.target).attr("id")
+    console.log(localStorage.channel);
+    loadVideo()
+  })
 }
 
 function init(lib){
@@ -168,13 +177,6 @@ $("#play-pause").click(() => {
 })
 
 $("#skip").click(() => {
-  loadVideo()
-})
-
-$(".cnl-btn").click(() => {
-  $(".cnl-btn").removeClass("active")
-  $(this).addClass("active")
-  localStorage.channel = $(this).attr("id")
   loadVideo()
 })
 
