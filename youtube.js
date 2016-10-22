@@ -98,7 +98,7 @@ function onYouTubeIframeAPIReady() {
   } catch (err) {
     song = {
       identifier: "dQw4w9WgXcQ",
-      title: "Loading libraries."
+      title: "Something went wrong :("
     }
   }
 
