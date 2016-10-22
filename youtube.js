@@ -1,28 +1,7 @@
 'use_strict';
 
-let library = {};
-let apiKey = "AIzaSyBAjUbzF1TPsIWDOovtuZgN0I8ZY1xK9Js";
-let videoId;
-let player;
-
-function initPlayer() {
-  if (!localStorage["channel"]) {
-    localStorage["channel"] = "all";
-  }
-  $("#" + localStorage.channel).addClass("active")
-
-  let tag = document.createElement('script');
-
-  tag.src = "https://www.youtube.com/iframe_api";
-  let firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-}
-
-function init(lib){
-  library[lib] = JSON.parse(sessionStorage[lib])
-}
-
-libraries = [
+const library = {};
+const libraries = [
   "electro-hub",
   "chill-corner",
   "korean-madness",
@@ -33,6 +12,36 @@ libraries = [
   "rock-n-roll",
   "coffee-house-jazz"
 ]
+
+let player;
+let live = false;
+let socket = new WebSocket(" wss://sockets.temp.discord.fm");
+let song;
+let lastSong;
+
+socket.onmessage = (event) => {
+  let data = JSON.parse(event.data);
+  console.log(data.data);
+  if (data.data.bot != localStorage.channel) return;
+  lastSong = data.data.song;
+  loadVideo();
+}
+
+function initPlayer() {
+  if (!localStorage["channel"]) {
+    localStorage["channel"] = "all";
+  }
+  $("#" + localStorage.channel).addClass("active")
+
+  let tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  let firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+function init(lib){
+  library[lib] = JSON.parse(sessionStorage[lib])
+}
 
 $.each(libraries, (ind, val) => {
   if (!sessionStorage[val]) {
@@ -56,30 +65,24 @@ setInterval(() => {
 }, 250)
 
 function loadVideo() {
-  videoId = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)].identifier
+  let song;
 
-  $.get("https://www.googleapis.com/youtube/v3/videos", {
-    part: "snippet",
-    id: videoId,
-    key: apiKey
-  }, function(data){
-    $("#videoTitle").text(data.items[0].snippet.title)
-  })
+  if (!live) song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
+  if (live) song = lastSong;
 
-  $("#videoLink").attr("href", "https://www.youtube.com/watch?v=" + videoId)
-
-  player.loadVideoById(videoId, 0, "large")
+  $("#videoTitle").text(song.title)
+  player.loadVideoById(song.identifier, 0, "large")
 }
 
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
 function onYouTubeIframeAPIReady() {
-  videoId = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)].identifier
+  song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
 
   player = new YT.Player('player', {
     height: '390',
     width: '640',
-    videoId: videoId,
+    videoId: song.identifier,
     events: {
       'onReady': onPlayerReady,
       'onStateChange': onPlayerStateChange,
@@ -97,16 +100,9 @@ function onYouTubeIframeAPIReady() {
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-  player.setVolume($("#volume").val());
-  $.get("https://www.googleapis.com/youtube/v3/videos", {
-    part: "snippet",
-    id: videoId,
-    key: apiKey
-  }, function(data){
-    $("#videoTitle").text(data.items[0].snippet.title)
-  })
+  $("#videoTitle").text(song.title)
 
-  setInterval(function(){
+  setInterval(() => {
     if (player.getPlayerState() == 1) {
       time = player.getCurrentTime()
 
@@ -114,24 +110,38 @@ function onPlayerReady(event) {
     }
   }, 250)
 
-
-  $("#videoLink").attr("href", "https://www.youtube.com/watch?v=" + videoId)
-
   event.target.playVideo();
 }
 
 function onPlayerStateChange(event) {
-  if (event.data == 0) {
-    loadVideo()
-  } else if (event.data == 2) {
-    $("#pp-icon").text("play_arrow")
+  if (!live) {
+    if (event.data == 0) {
+      loadVideo()
+    } else if (event.data == 2) {
+      $("#pp-icon").text("play_arrow")
+    } else {
+      $("#pp-icon").text("pause")
+    }
   } else {
-    $("#pp-icon").text("pause")
+    if (event.data != 0) {
+      player.playVideo();
+    }
   }
 }
 
 function onPlayerError(event) {
   loadVideo()
+}
+
+function initWebsocket() {
+  $.get("https://temp.discord.fm/libraries/" + localStorage.channel + "/queue", (data) => {
+    let startTime = new Date(data.playStart);
+    let position = Math.floor(Math.abs(Date.now() - startTime) / 1000);
+
+    $("#videoTitle").text(data.current.title)
+    player.loadVideoById(data.current.identifier, 0, "large")
+    player.seekTo(position);
+  });
 }
 
 $("#videoLink").click(() => {
@@ -153,11 +163,12 @@ $("#skip").click(() => {
 $(".cnl-btn").click(() => {
   $(".cnl-btn").removeClass("active")
   $(this).addClass("active")
-  localStorage.channel = $(this).attr("id").replace("dfm_", "")
+  localStorage.channel = $(this).attr("id")
   loadVideo()
 })
 
 $("body").keypress(key => {
+  if (live) return;
   if (key.keyCode == 32) {
     key.preventDefault();
     if (player.getPlayerState() == 1) {
@@ -170,4 +181,18 @@ $("body").keypress(key => {
 
 $("#volume").change(() => {
   player.setVolume($("#volume").val());
+});
+
+$("#live").click(() => {
+  if (!live) {
+    live = true;    
+    $("#play-pause").prop('disabled', true);
+    $("#skip").prop('disabled', true);
+    initWebsocket();
+  } else {
+    live = false;    
+    $("#play-pause").prop('disabled', false);
+    $("#skip").prop('disabled', false);
+    loadVideo();
+  }
 });

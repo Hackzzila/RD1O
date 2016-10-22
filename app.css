@@ -5,3 +5,21 @@
 .brand-logo {
   margin-left: 10px;
 }
+
+.control-block {
+  height: 60px;
+}
+
+.control-block .volume-wrapper {
+  width: 20%;
+  float: left;
+  line-height: 50px;
+}
+
+.control-block .controls {
+  float: right;
+}
+
+#videoTitle {
+  text-align: center;
+}

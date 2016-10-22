@@ -3,7 +3,6 @@
   <head>
     <title>RD1O Player</title>
 
-
     <!-- Materialize -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -32,15 +31,18 @@
               <div class="determinate" style="width: 0%" id="progress"></div>
           </div>
           <div class="card-content">
-            <span class="card-title grey-text text-darken-4 truncate" id="videoTitle"></span>
-            <p class="range-field">
-              <input type="range" id="volume" min="0" max="100" />
-            </p>
-            <center>
-              <button class="btn-floating waves-effect waves-light red" id="disabled" disabled><i class="material-icons"></i></button>
-              <button class="btn-floating btn-large waves-effect waves-light red" id="play-pause"><i id="pp-icon" class="material-icons">pause</i></button>
-              <button class="btn-floating waves-effect waves-light red" id="skip"><i class="material-icons">skip_next</i></button>
-            </center>
+            <div class="control-block">
+              <p class="range-field volume-wrapper">
+                
+                <input type="range" id="volume" min="0" max="100" />
+              </p>
+              <div class="controls">
+                <button class="btn-floating waves-effect waves-light red" id="live"><i class="material-icons">live_tv</i></button>
+                <button class="btn-floating btn-large waves-effect waves-light red" id="play-pause"><i id="pp-icon" class="material-icons">pause</i></button>
+                <button class="btn-floating waves-effect waves-light red" id="skip"><i class="material-icons">skip_next</i></button>
+              </div>
+            </div>
+            <span class="card-title grey-text text-darken-4 truncate" id="videoTitle"></span>            
           </div>
         </div>
       </div>
