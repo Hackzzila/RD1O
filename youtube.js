@@ -39,7 +39,7 @@ function initPlayer() {
     live = false;    
     $("#play-pause").prop('disabled', false).addClass("btn-large");
     $("#skip").prop('disabled', false);
-    $("#live").prop('disabled', true).removeClass("btn-large")
+    $("#live").prop('disabled', false).removeClass("btn-large")
     if (localStorage.channel == "playlist" || localStorage.channel == "all") $("#live").prop('disabled', true);
     loadVideo();
   })
