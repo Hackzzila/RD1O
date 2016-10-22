@@ -1,4 +1,4 @@
-'use_strict';
+'use strict';
 
 const library = {playlist: localStorage.playlist != null ? JSON.parse(localStorage.playlist) : []};
 
