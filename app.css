@@ -10,10 +10,9 @@
   height: 60px;
 }
 
-.control-block .volume-wrapper {
+.control-block #volume {
   width: 20%;
   float: left;
-  line-height: 50px;
 }
 
 .control-block .controls {
