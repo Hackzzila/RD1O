@@ -1,18 +1,20 @@
-var library = {}
-var apiKey = "AIzaSyBAjUbzF1TPsIWDOovtuZgN0I8ZY1xK9Js"
-var videoId
-var player
+'use_strict';
+
+let library = {};
+let apiKey = "AIzaSyBAjUbzF1TPsIWDOovtuZgN0I8ZY1xK9Js";
+let videoId;
+let player;
 
 function initPlayer() {
   if (!localStorage["channel"]) {
-    localStorage["channel"] = "all"
+    localStorage["channel"] = "all";
   }
-  $("#dfm_" + localStorage.channel).addClass("active")
+  $("#" + localStorage.channel).addClass("active")
 
-  var tag = document.createElement('script');
+  let tag = document.createElement('script');
 
   tag.src = "https://www.youtube.com/iframe_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
+  let firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
@@ -32,9 +34,9 @@ libraries = [
   "coffee-house-jazz"
 ]
 
-$.each(libraries, function(ind, val){
+$.each(libraries, (ind, val) => {
   if (!sessionStorage[val]) {
-    $.get("https://temp.discord.fm/libraries/" + val + "/json", function(data){
+    $.get("https://temp.discord.fm/libraries/" + val + "/json", (data) => {
       sessionStorage[val] = JSON.stringify(data);
       init(val)
     })
@@ -43,7 +45,7 @@ $.each(libraries, function(ind, val){
   }
 })
 
-setInterval(function(){
+setInterval(() => {
   if (Object.keys(library).length == 9) {
     library['all'] = []
     $.each(library, function(ind, val){
@@ -71,7 +73,6 @@ function loadVideo() {
 
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
-var player;
 function onYouTubeIframeAPIReady() {
   videoId = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)].identifier
 
@@ -96,6 +97,7 @@ function onYouTubeIframeAPIReady() {
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
+  player.setVolume($("#volume").val());
   $.get("https://www.googleapis.com/youtube/v3/videos", {
     part: "snippet",
     id: videoId,
@@ -132,11 +134,11 @@ function onPlayerError(event) {
   loadVideo()
 }
 
-$("#videoLink").click(function(){
+$("#videoLink").click(() => {
   player.pauseVideo()
 })
 
-$("#play-pause").click(function(){
+$("#play-pause").click(() => {
   if (player.getPlayerState() == 1) {
     player.pauseVideo()
   } else {
@@ -144,18 +146,18 @@ $("#play-pause").click(function(){
   }
 })
 
-$("#skip").click(function(){
+$("#skip").click(() => {
   loadVideo()
 })
 
-$(".cnl-btn").click(function(){
+$(".cnl-btn").click(() => {
   $(".cnl-btn").removeClass("active")
   $(this).addClass("active")
   localStorage.channel = $(this).attr("id").replace("dfm_", "")
   loadVideo()
 })
 
-$("body").keypress(function(key){
+$("body").keypress(key => {
   if (key.keyCode == 32) {
     key.preventDefault();
     if (player.getPlayerState() == 1) {
@@ -165,3 +167,7 @@ $("body").keypress(function(key){
     }
   }
 })
+
+$("#volume").change(() => {
+  player.setVolume($("#volume").val());
+});
