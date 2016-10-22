@@ -30,7 +30,6 @@ function initPlayer() {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
   $(".cnl-btn").click((e) => {
-    console.log("click");
     $(".cnl-btn").removeClass("active")
     $(e.target).addClass("active")
     localStorage.channel = $(e.target).attr("id")
