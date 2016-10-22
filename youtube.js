@@ -37,9 +37,9 @@ function initPlayer() {
     $(e.target).addClass("active")
     localStorage.channel = $(e.target).attr("id")
     live = false;    
-    $("#play-pause").prop('disabled', false);
+    $("#play-pause").prop('disabled', false).addClass("btn-large");
     $("#skip").prop('disabled', false);
-    $("#live").prop('disabled', false);
+    $("#live").removeClass("btn-large")
     if (localStorage.channel == "playlist" || localStorage.channel == "all") $("#live").prop('disabled', true);
     loadVideo();
   })
