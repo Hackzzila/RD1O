@@ -15,13 +15,13 @@ const libraries = [
 
 let player;
 let live = false;
-let socket = new WebSocket(" wss://sockets.temp.discord.fm");
+let socket = new WebSocket("wss://sockets.temp.discord.fm");
 let song;
 let lastSong;
 
 socket.onmessage = (event) => {
+  if (!live) return;
   let data = JSON.parse(event.data);
-  console.log(data.data);
   if (data.data.bot != localStorage.channel) return;
   lastSong = data.data.song;
   loadVideo();
@@ -32,11 +32,6 @@ function initPlayer() {
     localStorage["channel"] = "all";
   }
   $("#" + localStorage.channel).addClass("active")
-
-  let tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  let firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
 function init(lib){
@@ -84,53 +79,46 @@ function onYouTubeIframeAPIReady() {
     width: '640',
     videoId: song.identifier,
     events: {
-      'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange,
-      'onError': onPlayerError
+      onReady: event => {
+        $("#videoTitle").text(song.title)
+
+        setInterval(() => {
+          if (player.getPlayerState() == 1) {
+            time = player.getCurrentTime()
+
+            $("#progress").css("width", time / player.getDuration() * 100 + "%")
+          }
+        }, 250)
+
+        event.target.playVideo();
+      },
+
+      onStateChange: event => {
+        if (!live) {
+          if (event.data == 0) {
+            loadVideo()
+          } else if (event.data == 2) {
+            $("#pp-icon").text("play_arrow")
+          } else {
+            $("#pp-icon").text("pause")
+          }
+        } else {
+          if (event.data != 0) {
+            player.playVideo();
+          }
+        }
+      },
+
+      onError: () => loadVideo()
     },
     playerVars: {
-      "controls": 0,
-      "rel": 0,
-      "iv_load_policy": 3,
-      'fs': 0,
-      "showinfo": 0
+      controls: 0,
+      rel: 0,
+      iv_load_policy: 3,
+      fs: 0,
+      showinfo: 0
     }
   });
-}
-
-// 4. The API will call this function when the video player is ready.
-function onPlayerReady(event) {
-  $("#videoTitle").text(song.title)
-
-  setInterval(() => {
-    if (player.getPlayerState() == 1) {
-      time = player.getCurrentTime()
-
-      $("#progress").css("width", time / player.getDuration() * 100 + "%")
-    }
-  }, 250)
-
-  event.target.playVideo();
-}
-
-function onPlayerStateChange(event) {
-  if (!live) {
-    if (event.data == 0) {
-      loadVideo()
-    } else if (event.data == 2) {
-      $("#pp-icon").text("play_arrow")
-    } else {
-      $("#pp-icon").text("pause")
-    }
-  } else {
-    if (event.data != 0) {
-      player.playVideo();
-    }
-  }
-}
-
-function onPlayerError(event) {
-  loadVideo()
 }
 
 function initWebsocket() {
