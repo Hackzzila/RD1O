@@ -167,7 +167,7 @@ function initWebsocket() {
   $.get("https://temp.discord.fm/libraries/" + localStorage.channel + "/queue", (data) => {
     let startTime = new Date(data.playStart);
     let position = Math.floor(Math.abs(Date.now() - startTime) / 1000);
-    let song = data.current;
+    song = data.current;
 
     if (song.service != "YouTubeVideo") {
       alert("uh oh!\n"+song.service);
