@@ -22,3 +22,11 @@
 #videoTitle {
   text-align: center;
 }
+
+.music_note {
+  height: 390px;
+}
+
+.hidden {
+  display: none;
+}

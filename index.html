@@ -24,7 +24,10 @@
         <div class="card">
           <div class="card-image">
             <div class="video-container">
-              <div id="player"></div>
+              <div id="placeholder">
+                <img src="music_note.svg" alt="Music Note" class="music_note">
+              </div>
+              <div id="youtube-player"></div>
             </div>
           </div>
           <div class="progress">
@@ -36,6 +39,7 @@
                 <input type="range" id="volume" min="0" max="100" />
               </p>
               <div class="controls">
+                <button class="btn-floating waves-effect waves-light red tooltipped" id="playlist-add" data-position="top" data-delay="50" data-tooltip="Add to your playlist."><i class="material-icons">playlist_add</i></button>                
                 <button class="btn-floating waves-effect waves-light red tooltipped" id="live" data-position="top" data-delay="50" data-tooltip="Pull live tracks."><i class="material-icons">live_tv</i></button>
                 <button class="btn-floating btn-large waves-effect waves-light red" id="play-pause"><i id="pp-icon" class="material-icons">pause</i></button>
                 <button class="btn-floating waves-effect waves-light red" id="skip"><i class="material-icons">skip_next</i></button>
@@ -48,13 +52,12 @@
       <div class="col s12 m12 l6">
         <h3>Channels</h3>
           <div class="collection" id="libraries">
+            <a href="#!" class="collection-item cnl-btn" id="playlist">Your Playlist <span class="new badge red" data-badge-caption="">Beta</span></a>            
             <a href="#!" class="collection-item cnl-btn" id="all">All</a>
           </div>
         </div>
       </div>
     </div>
-
-    <iframe id="soundcloud-player" frameborder="0"></iframe>
 
     <footer class="page-footer red accent-1">
       <div class="container">
@@ -75,7 +78,7 @@
 
     <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
-    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>>
     <script src="youtube.js"></script>
 </body>
 </html>

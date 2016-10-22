@@ -1,13 +1,15 @@
 'use_strict';
 
-const library = {};
-const libraries = []
+const library = {playlist: localStorage.playlist != null ? JSON.parse(localStorage.playlist) : []};
 
+let libraries = sessionStorage.libraries != null ? JSON.parse(sessionStorage.libraries) : null;
 let player;
 let live = false;
 let socket = new WebSocket("wss://sockets.temp.discord.fm");
 let song;
 let lastSong;
+
+if (localStorage.playlist == null) localStorage.playlist = JSON.stringify(library.playlist);
 
 socket.onmessage = (event) => {
   if (!live) return;
@@ -22,6 +24,7 @@ function initPlayer() {
     localStorage.channel = "all";
   }
   $("#" + localStorage.channel).addClass("active")
+  if (localStorage.channel == "playlist" || localStorage.channel == "all") $("#live").prop('disabled', true);  
 
   let tag = document.createElement('script');
 
@@ -33,30 +36,30 @@ function initPlayer() {
     $(".cnl-btn").removeClass("active")
     $(e.target).addClass("active")
     localStorage.channel = $(e.target).attr("id")
-    console.log(localStorage.channel);
-    loadVideo()
+    live = false;    
+    $("#play-pause").prop('disabled', false);
+    $("#skip").prop('disabled', false);
+    $("#live").prop('disabled', false);
+    if (localStorage.channel == "playlist" || localStorage.channel == "all") $("#live").prop('disabled', true);
+    loadVideo();
   })
 }
 
-function init(lib){
-  library[lib] = JSON.parse(sessionStorage[lib])
-}
-
-$.get("https://temp.discord.fm/libraries/json", (data) => {
-  $.each(data, (ind, val) => {
+function init(){
+  $.each(libraries, (ind, val) => {
     $("#libraries").append(`<a href="#!" class="collection-item cnl-btn" id="${val.id}">${val.name}</a>`)
     if (!sessionStorage[val.id]) {
       $.get("https://temp.discord.fm/libraries/" + val.id + "/json", (data) => {
         sessionStorage[val.id] = JSON.stringify(data);
-        init(val.id)
+        library[val.id] = JSON.parse(sessionStorage[val.id])
       })
     } else {
-      init(val.id)
+      library[val.id] = JSON.parse(sessionStorage[val.id])
     }
   })
 
   setInterval(() => {
-    if (Object.keys(library).length == data.length) {
+    if (Object.keys(library).length - 1 == libraries.length) {
       library['all'] = []
       $.each(library, function(ind, val){
         library['all'] = library['all'].concat(val)
@@ -64,11 +67,17 @@ $.get("https://temp.discord.fm/libraries/json", (data) => {
       initPlayer()
     }
   }, 250)
+}
+
+if (!libraries) $.get("https://temp.discord.fm/libraries/json", (data) => {
+  sessionStorage.libraries = JSON.stringify(data);
+  libraries = JSON.parse(sessionStorage.libraries);
+  init()
 });
 
-function loadVideo() {
-  let song;
+if (libraries) init();
 
+function loadVideo() {
   try {
     if (!live) song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
     if (live) song = lastSong;
@@ -107,7 +116,7 @@ function onYouTubeIframeAPIReady() {
     title: "Something went wrong :("
   }
 
-  player = new YT.Player('player', {
+  player = new YT.Player('youtube-player', {
     height: '390',
     width: '640',
     videoId: song.identifier,
@@ -161,6 +170,7 @@ function initWebsocket() {
     let song = data.current;
 
     if (song.service != "YouTubeVideo") {
+      alert("uh oh!\n"+song.service);
       song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)];
       position = 0;
     }
@@ -215,4 +225,9 @@ $("#live").click(() => {
     $("#skip").prop('disabled', false);
     loadVideo();
   }
+});
+
+$("#playlist-add").click(() => {
+  library.playlist.push(live ? lastSong : song);
+  localStorage.playlist = JSON.stringify(library.playlist);
 });
