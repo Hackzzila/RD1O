@@ -71,6 +71,11 @@ function loadVideo() {
     }
   }
 
+  if (!song) song = {
+    identifier: "dQw4w9WgXcQ",
+    title: "Something went wrong :("
+  }
+
   $("#videoTitle").text(song.title)
   player.loadVideoById(song.identifier, 0, "large")
 }
@@ -85,6 +90,11 @@ function onYouTubeIframeAPIReady() {
       identifier: "dQw4w9WgXcQ",
       title: "Loading libraries."
     }
+  }
+
+  if (!song) song = {
+    identifier: "dQw4w9WgXcQ",
+    title: "Something went wrong :("
   }
 
   player = new YT.Player('player', {
