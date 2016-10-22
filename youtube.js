@@ -82,7 +82,10 @@ function loadVideo() {
     if (!live) song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
     if (live) song = lastSong;
 
-    if (song.service != "YouTubeVideo") song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
+    if (song.service != "YouTubeVideo") {
+      song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
+      Materialize.toast('Skipped non youtube video', 10000)
+    }
   } catch (err) {
     song = {
       identifier: "dQw4w9WgXcQ",
@@ -168,8 +171,8 @@ function initWebsocket() {
     song = data.current;
 
     if (song.service != "YouTubeVideo") {
-      alert("uh oh!\n"+song.service);
-      song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)];
+      song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
+      Materialize.toast('Skipped non youtube video', 10000);
       position = 0;
     }
 
