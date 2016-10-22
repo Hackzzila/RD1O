@@ -126,9 +126,7 @@ function onYouTubeIframeAPIReady() {
 
         setInterval(() => {
           if (player.getPlayerState() == 1) {
-            time = player.getCurrentTime()
-
-            $("#progress").css("width", time / player.getDuration() * 100 + "%")
+            $("#progress").css("width", player.getCurrentTime() / player.getDuration() * 100 + "%")
           }
         }, 250)
 
