@@ -1,17 +1,7 @@
 'use_strict';
 
 const library = {};
-const libraries = [
-  "electro-hub",
-  "chill-corner",
-  "korean-madness",
-  "japanese-lounge",
-  "retro-renegade",
-  "metal-mix",
-  "hip-hop",
-  "rock-n-roll",
-  "coffee-house-jazz"
-]
+const libraries = []
 
 let player;
 let live = false;
@@ -32,38 +22,54 @@ function initPlayer() {
     localStorage["channel"] = "all";
   }
   $("#" + localStorage.channel).addClass("active")
+
+  let tag = document.createElement('script');
+
+  tag.src = "https://www.youtube.com/iframe_api";
+  let firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
 function init(lib){
   library[lib] = JSON.parse(sessionStorage[lib])
 }
 
-$.each(libraries, (ind, val) => {
-  if (!sessionStorage[val]) {
-    $.get("https://temp.discord.fm/libraries/" + val + "/json", (data) => {
-      sessionStorage[val] = JSON.stringify(data);
-      init(val)
-    })
-  } else {
-    init(val)
-  }
-})
+$.get("https://temp.discord.fm/libraries/json", (data) => {
+  $.each(data, (ind, val) => {
+    $("#libraries").append(`<a href="#!" class="collection-item cnl-btn" id="${val.id}">${val.name}</a>`)
+    if (!sessionStorage[val.id]) {
+      $.get("https://temp.discord.fm/libraries/" + val.id + "/json", (data) => {
+        sessionStorage[val.id] = JSON.stringify(data);
+        init(val.id)
+      })
+    } else {
+      init(val.id)
+    }
+  })
 
-setInterval(() => {
-  if (Object.keys(library).length == 9) {
-    library['all'] = []
-    $.each(library, function(ind, val){
-      library['all'] = library['all'].concat(val)
-    })
-    initPlayer()
-  }
-}, 250)
+  setInterval(() => {
+    if (Object.keys(library).length == data.length) {
+      library['all'] = []
+      $.each(library, function(ind, val){
+        library['all'] = library['all'].concat(val)
+      })
+      initPlayer()
+    }
+  }, 250)
+});
 
 function loadVideo() {
   let song;
 
-  if (!live) song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
-  if (live) song = lastSong;
+  try {
+    if (!live) song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
+    if (live) song = lastSong;
+  } catch (err) {
+    song = {
+      identifier: "dQw4w9WgXcQ",
+      title: "Something went wrong :("
+    }
+  }
 
   $("#videoTitle").text(song.title)
   player.loadVideoById(song.identifier, 0, "large")
@@ -72,7 +78,14 @@ function loadVideo() {
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
 function onYouTubeIframeAPIReady() {
-  song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]
+  try {
+    song = library[localStorage.channel][Math.floor(Math.random() * library[localStorage.channel].length)]    
+  } catch (err) {
+    song = {
+      identifier: "dQw4w9WgXcQ",
+      title: "Loading libraries."
+    }
+  }
 
   player = new YT.Player('player', {
     height: '390',
