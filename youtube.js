@@ -176,8 +176,7 @@ function initWebsocket() {
     }
 
     $("#videoTitle").text(song.title)
-    player.loadVideoById(song.identifier, 0, "large")
-    player.seekTo(position);
+    player.loadVideoById(song.identifier, position, "large")
   });
 }
 
@@ -216,13 +215,15 @@ $("#volume").change(() => {
 $("#live").click(() => {
   if (!live) {
     live = true;    
-    $("#play-pause").prop('disabled', true);
+    $("#play-pause").prop('disabled', true).removeClass("btn-large");
     $("#skip").prop('disabled', true);
+    $("#live").addClass("btn-large");
     initWebsocket();
   } else {
     live = false;    
-    $("#play-pause").prop('disabled', false);
+    $("#play-pause").prop('disabled', false).addClass("btn-large");
     $("#skip").prop('disabled', false);
+    $("#live").removeClass("btn-large")
     loadVideo();
   }
 });
